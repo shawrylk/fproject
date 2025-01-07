@@ -60,7 +60,7 @@ export function createObjectSlice<
     items: [],
 
     add: (objects: TObj | TObj[]) => {
-      const slice = get().sliceName.sliceKey;
+      const slice = get()[sliceName][propName];
       if (!slice.isEnabled) return false;
 
       const arr = Array.isArray(objects) ? objects : [objects];
@@ -74,16 +74,17 @@ export function createObjectSlice<
         }
       }
       if (byUid) {
-        set(() => ({
-          byUid: { ...byUid },
-          items: Object.values(byUid),
-        }));
+        set((draft) => {
+          const obj = draft[sliceName][propName] as any;
+          obj.byUid = byUid;
+          obj.items = Object.values(byUid);
+        });
       }
       return !!byUid;
     },
 
     remove: (objects: TObj | TObj[]) => {
-      const slice = get().sliceName.propName;
+      const slice = get()[sliceName][propName];
       if (!slice.isEnabled) return false;
 
       const arr = Array.isArray(objects) ? objects : [objects];
@@ -98,21 +99,23 @@ export function createObjectSlice<
       }
 
       if (byUid) {
-        set(() => ({
-          byUid: { ...byUid },
-          items: Object.values(byUid),
-        }));
+        set((draft) => {
+          const obj = draft[sliceName][propName] as any;
+          obj.byUid = byUid;
+          obj.items = Object.values(byUid);
+        });
       }
       return !!byUid;
     },
 
     clear: () => {
-      const { isEnabled, items } = get().sliceName.propName;
+      const { isEnabled, items } = get()[sliceName][propName];
       if (!isEnabled || !items.length) return;
-      set(() => ({
-        byUid: {},
-        items: [],
-      }));
+      set((draft) => {
+        const obj = draft[sliceName][propName];
+        obj.byUid = {};
+        obj.items = [];
+      });
     },
   });
 }

@@ -14,11 +14,14 @@ type RootStore = StoreProps & InteractionSlice;
 
 export const useRootStore = createWithEqualityFn<RootStore>()(
   subscribeWithSelector(
-    immer((...states) => ({
-      ...createInteractionSlice(...states),
-      reset: () => {
-        console.log(states);
-      },
-    }))
+    immer((...state) => {
+      const [set, get, store] = state;
+      return {
+        ...createInteractionSlice(set as any, get, store as any),
+        reset: () => {
+          console.log(state);
+        },
+      };
+    })
   )
 );

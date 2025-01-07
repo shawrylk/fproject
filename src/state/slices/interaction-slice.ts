@@ -39,9 +39,9 @@ export interface InteractionSliceProps {
     setSelectedPoints: (points: Vector2Like[]) => void;
   };
 }
-export interface InteractionSlice extends TStore<SliceProps<InteractionMode>> {
+export type InteractionSlice = {
   interaction: InteractionSliceProps;
-}
+};
 
 const selectedSliceCreator = createObjectSlice<
   InteractiveObjectInfo,
@@ -109,16 +109,16 @@ export const createInteractionSlice: StateCreator<
         }),
       // Misc
       selected: {
-        ...selectedSliceCreator(set, get),
+        ...selectedSliceCreator(set as any, get as any),
         rangeSelectionEnabled: true,
         setRangeSelectionEnabled: (enabled: boolean) =>
           set((draft) => {
             draft.interaction.selected.rangeSelectionEnabled = enabled;
           }),
       },
-      hovered: { ...hoveredSliceCreator(set, get) },
+      hovered: { ...hoveredSliceCreator(set as any, get as any) },
       preview: {
-        ...previewSliceCreator(set, get),
+        ...previewSliceCreator(set as any, get as any),
         selectionPoints: [],
         setSelectedPoints: (points: Vector2Like[]) => {
           if (
