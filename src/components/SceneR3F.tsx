@@ -1,5 +1,4 @@
 import { Canvas } from "@react-three/fiber";
-import { FishR3F } from "./r3f-components/FishR3F";
 import {
   Environment,
   OrbitControls,
@@ -7,12 +6,13 @@ import {
 } from "@react-three/drei";
 import { MOUSE, Vector3 } from "three";
 import { useState } from "react";
+import { FishControllerR3F } from "./r3f-components/FishControllerR3F";
 
 const DEFAULT_FOV = 75;
 const NEAR = 1e-6;
 const FAR = 1e9;
 export const SceneR3F = () => {
-  const [position] = useState(new Vector3(0, 0, 10));
+  const [position] = useState(new Vector3(0, 0, 3));
 
   return (
     <>
@@ -53,7 +53,7 @@ export const SceneR3F = () => {
           zoomSpeed={2}
           zoomToCursor
         />
-        <FishR3F />;
+        <FishControllerR3F />;
       </Canvas>
     </>
   );

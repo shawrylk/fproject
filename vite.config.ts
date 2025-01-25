@@ -6,8 +6,9 @@ import { fileURLToPath, URL } from "url";
 export default defineConfig({
   plugins: [react()],
   server: {
-    open: true, // Automatically open the browser
+    open: false,
   },
+  envDir: './src/',
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
