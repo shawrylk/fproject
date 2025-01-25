@@ -1,16 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { FC, MutableRefObject, useEffect, useRef, useState } from "react";
 import { useThree } from "@react-three/fiber";
 import {
   PIDMovementHandlerR3F,
   PIDMovementHandlerRef,
 } from "./common/PIDMovementHandlerR3F";
-import { FishR3F, FishRef } from "./FishR3F";
+import { FishRef } from "./FishR3F";
 import { Object3D, Plane, Raycaster, Vector2, Vector3 } from "three";
 
 const raycaster = new Raycaster();
+interface FishControllerProps {
+  fishRef: MutableRefObject<FishRef>;
+}
 
-export const FishControllerR3F = () => {
-  const fishRef = useRef<FishRef>(null);
+export const FishControllerR3F: FC<FishControllerProps> = ({ fishRef }) => {
   const objectRef = useRef<Object3D | undefined>();
   const pidRef = useRef<PIDMovementHandlerRef>(null);
   const [destination, setDestination] = useState(new Vector3(0, 0, 0));
@@ -51,12 +53,6 @@ export const FishControllerR3F = () => {
   }, [camera, gl.domElement, size.height, size.width]);
   return (
     <>
-      {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-        <planeGeometry args={[50, 50]} />
-        <meshStandardMaterial color="#555" />
-      </mesh> */}
-      <FishR3F ref={fishRef} />
-
       <PIDMovementHandlerR3F
         ref={pidRef}
         objectRef={(() => {
@@ -64,9 +60,9 @@ export const FishControllerR3F = () => {
           return objectRef;
         })()}
         destination={destination}
-        p={0.5}
-        i={0.01}
-        d={1.8}
+        p={9e-2}
+        i={0e-3}
+        d={7e-1}
         randomFactor={0.0}
       />
     </>

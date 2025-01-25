@@ -5,14 +5,16 @@ import {
   PerspectiveCamera,
 } from "@react-three/drei";
 import { MOUSE, Vector3 } from "three";
-import { useState } from "react";
+import { MutableRefObject, useRef, useState } from "react";
 import { FishControllerR3F } from "./r3f-components/FishControllerR3F";
+import { FishR3F, FishRef } from "./r3f-components/FishR3F";
 
 const DEFAULT_FOV = 75;
 const NEAR = 1e-6;
 const FAR = 1e9;
 export const SceneR3F = () => {
   const [position] = useState(new Vector3(0, 0, 3));
+  const fishRef = useRef<FishRef>(null);
 
   return (
     <>
@@ -53,7 +55,12 @@ export const SceneR3F = () => {
           zoomSpeed={2}
           zoomToCursor
         />
-        <FishControllerR3F />;
+        {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+          <planeGeometry args={[50, 50]} />
+          <meshStandardMaterial color="#555" />
+        </mesh> */}
+        <FishR3F ref={fishRef} />
+        <FishControllerR3F fishRef={fishRef as MutableRefObject<FishRef>} />;
       </Canvas>
     </>
   );
