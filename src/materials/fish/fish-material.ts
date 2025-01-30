@@ -1,40 +1,63 @@
 import { ShaderMaterial, ShaderMaterialParameters } from "three";
+
 const vertexShader = /* glsl */ `
 #ifdef USE_COLOR
-attribute vec3 color;
+  attribute vec3 color;
 #else 
-uniform vec3 color;
+  uniform vec3 color;
 #endif
 
 uniform sampler2D noiseTexture; 
 uniform float time;       
-uniform float movementIntensity;        
+uniform float deltaTime;      
+
 uniform float randomSpeed;
+uniform vec3 randomMag;
+
 varying vec3 vColor;
+varying vec3 vNormal;
 
 void main() {
-    // Transform vertex to UV coordinates
-    // vec2 uv = position.xy * 0.5 + 0.5; // Normalize position to [0, 1]
-    // vec3 noise = texture2D(noiseTexture, uv).rgb;
-    // vec3 displacedPosition.xyz = position + (noise - 0.5) * movementIntensity;
-    float distToCenter = length(position);
-    float offsetX = texture2D(noiseTexture, vec2(time * 0.1, 0.0) * randomSpeed).r - 0.5;
-    float offsetY = texture2D(noiseTexture, vec2(time * 0.07, time * 0.15) * randomSpeed).r - 0.5;
-    float offsetZ = texture2D(noiseTexture, vec2(time * 0.2, time * 0.05) * randomSpeed).r - 0.5;
-    float multiplier = movementIntensity + (distToCenter * 1.0);
-    vec3 randomOffset = vec3(offsetX, offsetY, offsetZ) * multiplier;
-    vec3 displacedPosition = position + randomOffset;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(displacedPosition, 1.0);
-    vColor = color;
+  float distanceFactor = pow(length(position), 15e-1) * -5e-3;
+  vec3 random = texture(noiseTexture, vec2(time * randomSpeed + distanceFactor , time * randomSpeed + distanceFactor )).rgb * randomMag;
+  // Note the subtraction of 0.5 here to center noise around 0
+  vec3 future = (texture(noiseTexture, vec2((time + deltaTime) * randomSpeed + distanceFactor , (time + deltaTime) * randomSpeed + distanceFactor )).rgb - vec3(0.5)) * randomMag;
+
+  // rotate
+  vec3 direction = normalize(future - random);
+  float angle = atan(direction.z, direction.x);
+  float s = sin(angle);
+  float c = cos(angle);
+  mat3 rotationY = mat3(
+      c,   0.0,  s,
+      0.0, 1.0,  0.0,
+     -s,   0.0,  c
+  );
+
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position * rotationY + random, 1.0);
+  vColor = color;
+  vNormal = normalMatrix * normal;
 }
 `;
 
 const fragmentShader = /* glsl */ `
+varying vec3 vColor;
+varying vec3 vNormal;
+
 uniform vec3 emissive;        
 uniform float emissiveIntensity;        
-varying vec3 vColor;
+uniform vec3 lightDirection;
+uniform vec3 lightColor;     
+uniform vec3 ambientColor;  
 void main() {
-  gl_FragColor = vec4(vColor + emissive * emissiveIntensity, 1.0);
+  vec3 N = normalize(vNormal);
+  vec3 L = normalize(lightDirection);
+  float lambertTerm = max(dot(N, -L), 0.0);
+  vec3 diffuse = vColor * lightColor * lambertTerm;
+  vec3 ambient = ambientColor * vColor;
+  vec3 emissiveTerm = emissive * emissiveIntensity;
+  vec3 finalColor = ambient + diffuse + emissiveTerm;
+  gl_FragColor = vec4(finalColor, 1.0);
 }
 `;
 

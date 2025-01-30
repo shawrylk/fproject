@@ -6,12 +6,12 @@ import {
 } from "@react-three/drei";
 import { MOUSE, Vector3 } from "three";
 import { MutableRefObject, useRef, useState } from "react";
-import { FishControllerR3F } from "./r3f-components/FishControllerR3F";
-import { FishR3F, FishRef } from "./r3f-components/FishR3F";
+import { FishControllerR3F } from "./r3f-components/Fish/FishControllerR3F";
+import { FishR3F, FishRef } from "./r3f-components/Fish/FishR3F";
 
 const DEFAULT_FOV = 75;
-const NEAR = 1e-6;
-const FAR = 1e9;
+const NEAR = 1e-3;
+const FAR = 1e6;
 export const SceneR3F = () => {
   const [position] = useState(new Vector3(0, 0, 3));
   const fishRef = useRef<FishRef>(null);

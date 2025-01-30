@@ -3,7 +3,7 @@ import { useThree } from "@react-three/fiber";
 import {
   PIDMovementHandlerR3F,
   PIDMovementHandlerRef,
-} from "./common/PIDMovementHandlerR3F";
+} from "../common/PIDMovementHandlerR3F";
 import { FishRef } from "./FishR3F";
 import { Object3D, Plane, Raycaster, Vector2, Vector3 } from "three";
 
@@ -51,19 +51,22 @@ export const FishControllerR3F: FC<FishControllerProps> = ({ fishRef }) => {
       gl.domElement.removeEventListener("mousedown", handlePointerDown);
     };
   }, [camera, gl.domElement, size.height, size.width]);
+  
   return (
     <>
+
       <PIDMovementHandlerR3F
         ref={pidRef}
         objectRef={(() => {
+          console.log(fishRef)
           objectRef.current = fishRef.current?.getObject3D();
           return objectRef;
         })()}
         destination={destination}
-        p={9e-2}
+        p={3e-2}
         i={0e-3}
-        d={7e-1}
-        randomFactor={0.0}
+        d={3e-1}
+        randomFactor={0.1}
       />
     </>
   );
