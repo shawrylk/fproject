@@ -33,7 +33,7 @@ const createProceduralFishMaterial = (
       randomSpeed: { value: 8e-3 },
       randomMag: { value: new Vector3(10, 10, 10) },
       // light
-      lightDirection: { value: new Vector3(1, 1, 1).normalize() },
+      lightDirection: { value: new Vector3(-1, -1, -1).normalize() },
       lightColor: { value: new Color(0xffffff) },
       ambientColor: { value: new Color(0x111111) },
     },

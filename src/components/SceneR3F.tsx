@@ -10,10 +10,10 @@ import { FishControllerR3F } from "./r3f-components/Fish/FishControllerR3F";
 import { FishR3F, FishRef } from "./r3f-components/Fish/FishR3F";
 
 const DEFAULT_FOV = 75;
-const NEAR = 1e-3;
-const FAR = 1e6;
+const NEAR = 1e-1;
+const FAR = 1e3;
 export const SceneR3F = () => {
-  const [position] = useState(new Vector3(0, 0, 3));
+  const [position] = useState(new Vector3(50, 10, 10));
   const fishRef = useRef<FishRef>(null);
 
   return (
@@ -45,7 +45,11 @@ export const SceneR3F = () => {
           makeDefault
           position={[position.x, position.y, position.z]}
           fov={DEFAULT_FOV}
-          zoom={1}
+          onAfterRender={(_, _2, camera) => {
+            const pos = fishRef.current?.getObject3D()?.position;
+            if (pos) camera.lookAt(pos);
+          }}
+          zoom={3}
           aspect={window.innerWidth / window.innerHeight}
         />
         <OrbitControls
